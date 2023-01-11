@@ -94,7 +94,7 @@ export const Gastos = () => {
               (Gasto.map((resp, index) => (
 
                 <tr key={index} className={'pointer'} >
-                  <th scope="row">{resp.monto}</th>
+                  <th scope="row">{Number(resp.monto).toLocaleString('es')}</th>
                   <th scope="row">{resp.motivo}</th>
                   <th scope="row">{ParseToDate(resp.timestamp)}</th>
                 </tr>

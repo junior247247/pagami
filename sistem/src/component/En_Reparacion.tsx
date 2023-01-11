@@ -156,9 +156,9 @@ export const En_Reparacion = () => {
                                     <td>{resp.serial}</td>
                                     <td>{resp.phone}</td>
                                     <td>{ParseToDate(resp.fecha)}</td>
-                                    <td>{resp.costoReparacion}</td>
-                                    <td>{resp.costoRepuesto}</td>
-                                    <td>{resp.total}</td>
+                                    <td>{Number(resp.costoReparacion).toLocaleString('es')}</td>
+                                    <td>{Number(resp.costoRepuesto).toLocaleString('es')}</td>
+                                    <td>{Number(resp.total).toLocaleString('es')}</td>
                                     <td>{resp.correo}</td>
 
                                     <td><a href="#" className='btn btn-color' onClick={() => setIsVisible({ isVisible: true, id: resp.id })}>Estado</a></td>

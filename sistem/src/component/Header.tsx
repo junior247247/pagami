@@ -21,7 +21,14 @@ export const Header = () => {
       </div>
         <h1 className='text-white font-size-header'>{state.state}</h1>
 
-        <button className='btn btn-color' onClick={signOut}>cerrar sesion</button>
+        <div className="salir">
+        <img onClick={signOut} className='pointer' width={30} src={require('../img/cierre.png')}  />
+        <div className="items ">
+          <span>Salir</span>
+        </div>
+        </div>
+       
+      
     </header>
    
    )

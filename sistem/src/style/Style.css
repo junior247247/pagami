@@ -15,6 +15,30 @@ body {
 
 
 }
+.salir{
+    position: relative;
+    
+}
+.items{
+    position: absolute;
+    background-color: #121212;
+    border:  1px solid white;
+    left: -20px;
+    top: 35px;
+    color: white;
+    padding: 3px;
+    border-radius: 3px;
+    display: none;
+}
+.items span{
+    padding: 3px;
+    cursor: pointer;
+    user-select: none;
+ 
+}
+.items span:hover{
+    opacity: 0.5;
+}
 .modal-reparacion{
     background-color: white;
     border-radius: 10px;
