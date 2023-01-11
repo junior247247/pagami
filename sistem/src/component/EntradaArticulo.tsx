@@ -230,7 +230,7 @@ export const EntradaArticulo = () => {
             fileUri: url,
             costoReparacion,
             costoRepuesto,
-            total: Number(costoRepuesto) + Number(costoRepuesto),
+            total: Number(costoRepuesto) + Number(costoReparacion),
             description: descriptionReparacion,
             equipo,
             serial,
@@ -293,7 +293,7 @@ export const EntradaArticulo = () => {
                     <div className="row justify-content-between ">
                         <div className="col-auto form-group">
 
-                            <input value={telefono} placeholder='Telefono' onChange={(e) => onChangeForm(e.target.value, 'telefono')} type="text" className='p-2 from-control' />
+                            <input value={telefono}  placeholder='Telefono' onChange={(e) => onChangeForm(e.target.value, 'telefono')} type='number' className='p-2 from-control' />
                         </div>
                         <div className="col-auto form-group">
 
@@ -550,7 +550,7 @@ export const EntradaArticulo = () => {
                     <h5 className='text-color'>Descripcion de la reparacion</h5>
                     <div className="border p-3">
                         <div className="form-group">
-                            <textarea onChange={(e) => onChangeForm(e.target.value, 'descriptionReparacion')} placeholder='Descripcion de la reparacion' className='form-control area' />
+                            <textarea onChange={(e) => onChangeForm(e.target.value, 'descriptionReparacion')} value={descriptionReparacion} placeholder='Descripcion de la reparacion' className='form-control area' />
                         </div>
                     </div>
 

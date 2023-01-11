@@ -38,7 +38,9 @@ const Init:Caracteristicas={
   equipo:'',
   serial:'',
   cliente:'',
-  fecha:new Date(212311231)
+  fecha:new Date(212311231),
+  description:"",
+  observacion:''
   
 
 }
@@ -89,7 +91,9 @@ export const Historial = () => {
       equipo:resp.get('equipo'),
       serial:resp.get('serial'),
       cliente:resp.get('name'),
-      fecha:new Date(resp.get('timestamp'))
+      fecha:new Date(resp.get('timestamp')),
+      observacion:resp.get('observacion'),
+      description:resp.get('description')
       
     }
 

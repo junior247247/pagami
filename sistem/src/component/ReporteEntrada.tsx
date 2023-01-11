@@ -49,7 +49,9 @@ const Init:Caracteristicas={
         serial:'',
         cliente:'',
         noFact:'',
-        fecha:new Date(12021564)
+        fecha:new Date(12021564),
+        description:'',
+        observacion:''
         
   
 }
@@ -57,7 +59,7 @@ const Init:Caracteristicas={
 export const ReporteEntrada = ({id}:Props) => {
 
     const [obj, setobj] = useState<Caracteristicas>(Init)
-    console.log(obj.fecha)
+   // console.log(obj.fecha)
     
     const getData= async (id:string)=>{
 
@@ -96,10 +98,13 @@ export const ReporteEntrada = ({id}:Props) => {
           serial:resp.get('serial'),
           cliente:resp.get('name'),
           fecha:new Date(resp.get('timestamp')),
-          noFact:resp.get('noFact')
+          noFact:resp.get('noFact'),
+          description:resp.get('description'),
+          observacion:resp.get('observacion')
+        
           
         }
-    
+        console.log(Crs.observacion)
         setobj(Crs);
     
       }
@@ -292,13 +297,23 @@ export const ReporteEntrada = ({id}:Props) => {
 
                     <View style={{ ...style.line }} />
                     <View style={style.contianerTotal}>
-                        <Text style={style.textDesct}>Csoto Repuesto:{(obj.costoRepuesto)? obj.costoRepuesto:0}</Text>
+                        <Text style={style.textDesct}>Costo Repuesto:{(obj.costoRepuesto)? obj.costoRepuesto:0}</Text>
 
                         <Text style={style.textDesct}>Costo Reparacion:{(obj.costoReparacion)?obj.costoReparacion:0}</Text>
                         <Text style={style.textDesct}>Total:{obj.total}</Text>
 
                     </View>
-                    <View style={{ ...style.line }} />
+               
+                    <Text style={{ ...style.textDesct, textAlign: 'center', marginTop: 3 }}>Observacion</Text>
+                    <Text style={{ fontSize: 3, marginHorizontal: 3, textAlign: 'center' }}>{'obj.observacion'}</Text>
+
+                 
+                    <Text style={{ ...style.textDesct, textAlign: 'center', marginTop: 3 }}>Description</Text>
+                    <Text style={{ fontSize: 3, marginHorizontal: 3, textAlign: 'center' }}>{'obj.description'}</Text>
+
+
+
+              
                     <Text style={{ ...style.textDesct, textAlign: 'center', marginTop: 3 }}>Garantia</Text>
                     <Text style={{ fontSize: 3, marginHorizontal: 3, textAlign: 'center' }}>
                         Recomendamos a los clientes verificar las reparaciones realizadas a sus

@@ -4,7 +4,17 @@ import React, { useEffect, useContext, useState } from 'react'
 import { app } from '../Firebase/conexion';
 import { context } from '../hooks/AppContext'
 import { ReporteCierre } from './ReporteCierre';
+/*
+  total: total,
+            idLocal: idLoca,
+            cierre: 'SIN CIERRE',
+            tipo: 'VENTA'
+*/
 
+interface CajaDiaria{
+  tipo:string;
+  total:string;
+}
 interface Money {
   monto: number
 }
@@ -16,7 +26,7 @@ export const Caja = () => {
 
   const {idLoca}=state;
   const [IsVisible, setIsVisible] = useState(false);
-
+  const [CajaDiaria, setCajaDiaria] = useState<CajaDiaria[]>([])
   const [IsVisibleReport, setIsVisibleReport] = useState(false);
   const [DineroEnCaja, setDineroEnCaja] = useState<number>(0);
   const [monto, setmonto] = useState<Money[]>([]);
@@ -30,12 +40,14 @@ export const Caja = () => {
     const coll = collection(db, 'Entrada');
     const Q = query(coll, where('CIERRE', '==', 'SIN CIERRE'));
     onSnapshot(Q, (resp) => {
-      const data: Money[] = resp.docs.map(res => {
-        return {
-          monto: Number(res.get('total'))
-        }
-      })
-      setmonto(data);
+     const data:CajaDiaria[]=resp.docs.map(res=>{
+      return{
+        tipo:res.get('tipo'),
+        total:res.get('total')
+      }
+     })
+     setCajaDiaria(data);
+     
     })
 
   }, [])
@@ -89,35 +101,24 @@ export const Caja = () => {
         <table className="table table-dark table-hover ">
           <thead>
             <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Identificacion</th>
-              <th scope="col">Equipo</th>
-              <th scope="col">Serial</th>
-
-              <th scope="col">Telefono</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Reparacion</th>
-              <th scope="col">Repuesto</th>
+              <th scope="col">Tipo</th>
               <th scope="col">Total</th>
-              <th scope="col">Correo</th>
+          
 
             </tr>
           </thead>
           <tbody >
 
-            <tr >
-              <th scope="row">{'resp.name'}</th>
-              <td>{'resp.identiifcation'}</td>
-              <td>{'resp.equipo'}</td>
-              <td>{'resp.serial'}</td>
-              <td>{'resp.phone'}</td>
-              <td>{''}</td>
-              <td>{''}</td>
-              <td>{''}</td>
-              <td>{'resp.total'}</td>
-              <td>{'resp.correo'}</td>
-              <td><a className='btn btn-success'  >Imprimir</a></td>
+          {
+            CajaDiaria.map((resp,index)=>(
+              <tr key={index} >
+              <th scope="row">{resp.tipo}</th>
+              <td>{resp.total}</td>
+             
             </tr>
+            ))
+          }
+         
 
 
           </tbody>

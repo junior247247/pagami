@@ -18,6 +18,8 @@ export interface Entrada{
 
 export interface Caracteristicas{
     encendido:boolean;
+    description?:string;
+    observacion?:string;
     pantalla:boolean;
     audio:boolean;
     microfono:boolean;
