@@ -6,11 +6,13 @@ import { app } from '../Firebase/conexion';
 export interface State{
     state:string,
     idLoca:string;
+    close:boolean
 }
 
 const initState:State={
     state:'Dashboard',
     idLoca:'',
+    close:false
 }
 
 interface Props{
@@ -18,10 +20,11 @@ interface Props{
     onChange:(state:string)=>void;
     login:(idLocal:string)=>void;
     signOut:()=>void;
+    close:(close:boolean)=>void;
 }
 export const context=createContext({}as Props);
 
-type action={type:'update',state:string}|{type:'login',idLocal:string}|{type:'signOut'};
+type action={type:'update',state:string}|{type:'login',idLocal:string}|{type:'signOut'}|{type:'close',close:boolean};
 
 const Reducer=(state:State,action:action):State=>{
 
@@ -43,6 +46,11 @@ const Reducer=(state:State,action:action):State=>{
                 idLoca:'',
             }
             
+            case 'close':
+                return{
+                    ...state,
+                    close:action.close
+                }
         default:
             return state;
     }
@@ -69,7 +77,9 @@ export const AppContext = ({children}:any) => {
 
     }, [])
     
-
+    const close=(close:boolean)=>{
+        dispatch({type:'close',close});
+    }
     const login=(idLogin:string)=>{
         dispatch({type:'login',idLocal:idLogin});
         //console.log(idLogin);
@@ -90,7 +100,8 @@ export const AppContext = ({children}:any) => {
     state,
     onChange,
     login,
-    signOut
+    signOut,
+    close
    }}
    >
         {children}

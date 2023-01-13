@@ -526,6 +526,7 @@ body {
     position: absolute;
     z-index: 999;
     top: 0;
+    left: 0;
 
 }
 
@@ -537,7 +538,7 @@ body {
     text-decoration: none;
     padding-top: 15px;
     padding-bottom: 5px;
-
+    user-select: none;
 
     font-size: 15px;
     font-family: sans-serif;

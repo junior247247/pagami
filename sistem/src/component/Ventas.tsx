@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState, useRef } from 'react'
 import { context } from '../hooks/AppContext';
-import { collection, query, orderBy, getFirestore, onSnapshot, addDoc, where, updateDoc, getDoc, QuerySnapshot, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { collection, query, orderBy, getFirestore, onSnapshot, addDoc, where, updateDoc, getDoc, QuerySnapshot, getDocs, doc, deleteDoc, setDoc } from 'firebase/firestore';
 import { Producto } from '../entidades/Producto';
 import { app } from '../Firebase/conexion';
 import { Console } from 'console';
@@ -46,7 +46,7 @@ export const Ventas = () => {
 
     const addCajaDiaria = () => {
         const db = getFirestore(app);
-        const coll = collection(db, 'cajaDiaria');
+        const coll = collection(db, 'CajaDiaria');
         const total = Detalle.reduce((total, prod) => total + Number(prod.total), 0);
         addDoc(coll, {
             total: total,
@@ -70,8 +70,9 @@ export const Ventas = () => {
 
     const agregarCaja= async()=>{
         const db=getFirestore(app);
-        const coll=collection(db,'dinero');
+        const coll=collection(db,'Caja');
         const document = doc(coll, idLoca);
+
         const get = getDoc(document);
         const resp= await get;
         if(resp.exists()){
@@ -83,10 +84,11 @@ export const Ventas = () => {
             })
         }else{
             const total = Detalle.reduce((total, prod) => total + Number(prod.total), 0);
-            addDoc(coll,{
+            setDoc(doc(db,'Caja',idLoca),{
                 idLocal:idLoca,
                 money:total
             })
+         
         }
     }
 
@@ -109,9 +111,10 @@ export const Ventas = () => {
 
         })
         addCajaDiaria();
-        setIsVisible(true);
-        setIdVenta('');
+        setIsVisible(false);
+     
         agregarCaja();
+        setIdVenta('');
         setDetalle([]);
        
 
@@ -451,7 +454,7 @@ export const Ventas = () => {
             </div>
             <div className="d-flex justify-content-between">
                 <button className='btn ml-3 btn-outline-light mt-3' onClick={
-                    cerrarVenta
+                    ()=>  setIsVisible(true)
 
                 }>Guardar</button>
                 <h2 className='text-white mr-3 mt-3'>Total:{Detalle.reduce((total, obj) => total + Number(obj.total), 0).toLocaleString('es')}</h2>
@@ -525,7 +528,7 @@ export const Ventas = () => {
 
                 <div className="modal-report-container" id='modal-report-container' onClick={() => {
 
-                    setIsVisible(false)
+                    cerrarVenta();
 
 
                 }}>
@@ -533,7 +536,7 @@ export const Ventas = () => {
                         <div className="modal-report-header" onClick={(e) => e.stopPropagation()}>
                             <h6>Reporte</h6>
                             <a onClick={() => {
-                                setIsVisible(true)
+                               cerrarVenta();
 
                             }} className="btn btn-danger">&times;</a>
                         </div>

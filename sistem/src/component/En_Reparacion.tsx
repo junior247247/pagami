@@ -1,5 +1,5 @@
 import { async } from '@firebase/util';
-import { collection, getFirestore, onSnapshot, query, orderBy, where, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, getFirestore, onSnapshot, query, orderBy, where, doc, getDoc, updateDoc, addDoc, setDoc } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react'
 import { Entrada } from '../entidades/Entrada';
 import { app } from '../Firebase/conexion';
@@ -10,7 +10,8 @@ import { ReporteEntrada } from './ReporteEntrada';
 
 export const En_Reparacion = () => {
 
-    const { onChange } = useContext(context);
+    const { onChange, state } = useContext(context);
+    const { idLoca } = state;
     const [Data, setData] = useState<Entrada[]>([]);
     const [IsVisible, setIsVisible] = useState({ isVisible: false, id: '' });
     const [IsVisibleReport, setIsVisiblReporte] = useState({ isVisible: false, id: '' });
@@ -18,8 +19,8 @@ export const En_Reparacion = () => {
     const [IVisibleUpdate, setIVisibleUpdate] = useState({ IsVisible: false, id: '' });
     const [FilterData, setFilterData] = useState<Entrada[]>([]);
     const [visibleDescrip, setVisibleDescript] = useState(false)
-    const [dataSelected, setDataSelected] = useState({observacion:'',description:''})
-
+    const [dataSelected, setDataSelected] = useState({ observacion: '', description: '' })
+    const [DescCosto, setDescCosto] = useState({total:'',cReparacion:'',cRepuesto:''})
 
     const listo = (id: string) => {
         const db = getFirestore(app);
@@ -32,20 +33,75 @@ export const En_Reparacion = () => {
 
     }
 
-    const getDataSelect= async (id:string)=>{
+    const getDataSelect = async (id: string) => {
         setIsVisible({ isVisible: false, id: '' })
         setVisibleDescript(true);
-        const db=getFirestore(app);
-        const coll=collection(db,'Entrada');
-        const document=doc(coll,id);
-        const get=  await   getDoc(document);
-        setDataSelected({observacion:get.get('observacion'),description:get.get('description')});
+        const db = getFirestore(app);
+        const coll = collection(db, 'Entrada');
+        const document = doc(coll, id);
+        const get = await getDoc(document);
+        setDataSelected({ observacion: get.get('observacion'), description: get.get('description') });
+    }
+
+
+    const getDataGener = async (id: string) => {
+        setIsVisible({ isVisible: true, id: id })
+       
+        const db = getFirestore(app);
+        const coll = collection(db, 'Entrada');
+        const document = doc(coll, id);
+        const get = await getDoc(document);
+        setDescCosto({ cRepuesto: get.get('costoRepuesto'), cReparacion: get.get('costoReparacion'),total:get.get('total') });
     }
 
     const changeModal = (id: string) => {
         setIVisibleUpdate({ IsVisible: true, id: id });
         setIsVisible({ isVisible: false, id: id });
 
+    }
+
+
+
+    const addCajaDiaria = (total: number) => {
+        const db = getFirestore(app);
+        const coll = collection(db, 'CajaDiaria');
+
+        addDoc(coll, {
+            total: total,
+            idLocal: idLoca,
+            cierre: 'SIN CIERRE',
+            tipo: 'VENTA'
+        })
+
+
+    }
+
+
+    const agregarCaja = async (total: number) => {
+        const db = getFirestore(app);
+        const coll = collection(db, 'Caja');
+        const document = doc(coll, idLoca);
+        const get = getDoc(document);
+        const resp = await get;
+        if (resp.exists()) {
+
+            let money: number = resp.get('money');
+            money += Number(total);
+            updateDoc(document, {
+                money
+            })
+        } else {
+       
+
+            setDoc(doc(db,'Caja',idLoca),{
+                idLocal:idLoca,
+                money:total
+            })
+          /*  addDoc(coll, {
+                idLocal: idLoca,
+                money: total
+            })*/
+        }
     }
 
 
@@ -60,6 +116,7 @@ export const En_Reparacion = () => {
         const db = getFirestore(app);
         const coll = collection(db, 'Entrada');
         const document = doc(coll, id);
+
         updateDoc(document, {
             costoReparacion: costoReparacion,
             costoRepuesto: costoRepuesto,
@@ -71,12 +128,17 @@ export const En_Reparacion = () => {
         setIVisibleUpdate({ IsVisible: false, id: '' });
         clear();
 
+
     }
 
-    const retirar = (id: string) => {
+    const retirar = async (id: string) => {
         const db = getFirestore(app);
         const coll = collection(db, 'Entrada');
         const document = doc(coll, id);
+        const resp = await getDoc(document);
+        const total = Number(resp.get('total'));
+        agregarCaja(total);
+        addCajaDiaria(total);
         updateDoc(document, {
             estado: 'Retirado'
         })
@@ -161,7 +223,7 @@ export const En_Reparacion = () => {
                                     <td>{Number(resp.total).toLocaleString('es')}</td>
                                     <td>{resp.correo}</td>
 
-                                    <td><a href="#" className='btn btn-color' onClick={() => setIsVisible({ isVisible: true, id: resp.id })}>Estado</a></td>
+                                    <td><a href="#" className='btn btn-color' onClick={() => getDataGener(resp.id)}>Estado</a></td>
                                 </tr>
 
                             ))
@@ -177,16 +239,30 @@ export const En_Reparacion = () => {
                 <div className="modal-container-delete" id='modal-container-delete' onClick={() => setIsVisible({ isVisible: false, id: '' })}>
                     <div className="modal-reparacion" onClick={(e) => e.stopPropagation()}>
                         <div className="d-flex justify-content-between header-modal  align-items-center">
+
                             <p className='ml-2 mt-3 '>Actualizar Estado</p>
                             <button onClick={() => setIsVisible({ isVisible: false, id: '' })} className='btn bg-white f5'>&times;</button>
                         </div>
                         <hr />
+                        <div className="container">
+                            <div className="row justify-content-between">
+                                <div className="col-auto">
+                                    <p>C.Reparacion:{DescCosto.cReparacion}</p>
+                                </div>
+                                <div className="col-auto">
+                                    <p>C.Repuesto:{DescCosto.cRepuesto}</p>
+                                </div>
+                                <div className="col-auto">
+                                    <p>Total:{DescCosto.total}</p>
+                                </div>
+                            </div>
+                        </div>
                         <h5 className='display-5 text-center mt-1'>Seleccione una opcion</h5>
 
                         <div className="d-flex justify-content-between  p-2 mt-3">
-                            <button className='btn btn-color' onClick={() => retirar(IsVisible.id)} >Retirado</button>
+                            <button className='btn btn-danger' onClick={() => retirar(IsVisible.id)} >Retirado</button>
 
-                            <button className='btn btn-color' onClick={() => listo(IsVisible.id)} >Listo</button>
+                            <button className='btn btn-success' onClick={() => listo(IsVisible.id)} >Listo</button>
                             <button className='btn btn-color' onClick={() => showReport(IsVisible.id)} >Reporte</button>
                             <button className='btn btn-color' onClick={() => changeModal(IsVisible.id)} >Actualizar Precio</button>
                             <button className='btn btn-color' onClick={() => getDataSelect(IsVisible.id)} >Tipo</button>
@@ -236,6 +312,7 @@ export const En_Reparacion = () => {
                 <div className="modal-container-delete" id='modal-container-delete' onClick={() => setIVisibleUpdate({ IsVisible: false, id: '' })}>
                     <div className="modal-reparacion" onClick={(e) => e.stopPropagation()}>
                         <div className="d-flex justify-content-between header-modal  align-items-center">
+
                             <p className='ml-2 mt-3 '>Actualizar Precios</p>
                             <button onClick={() => setIVisibleUpdate({ IsVisible: false, id: '' })} className='btn bg-white f5'>&times;</button>
                         </div>
@@ -278,31 +355,32 @@ export const En_Reparacion = () => {
 
 
             {
-                    (visibleDescrip) &&
+                (visibleDescrip) &&
 
-           
 
-            <div className="modal-container-delete" id='modal-container-delete' onClick={() => setVisibleDescript(false)}>
-                <div className="modal-reparacion" onClick={(e) => e.stopPropagation()}>
-                    <div className="d-flex justify-content-between header-modal  align-items-center">
-                        <p className='ml-2 mt-3 '>Actualizar Precios</p>
-                        <button onClick={() => setVisibleDescript(false)} className='btn bg-white f5'>&times;</button>
-                    </div>
-                    <hr />
 
-                    <div className="container">
-                        <div className="row">
-                            <div className="col">
-                                <p><strong>Description: </strong>{dataSelected.description}</p>
-                                <p><strong>Observacion: </strong>{dataSelected.observacion}</p>
+                <div className="modal-container-delete" id='modal-container-delete' onClick={() => setVisibleDescript(false)}>
+                    <div className="modal-reparacion" onClick={(e) => e.stopPropagation()}>
+                        <div className="d-flex justify-content-between header-modal  align-items-center">
+
+                            <p className='ml-2 mt-3 '>Actualizar Precios</p>
+                            <button onClick={() => setVisibleDescript(false)} className='btn bg-white f5'>&times;</button>
+                        </div>
+                        <hr />
+
+                        <div className="container">
+                            <div className="row">
+                                <div className="col">
+                                    <p><strong>Description: </strong>{dataSelected.description}</p>
+                                    <p><strong>Observacion: </strong>{dataSelected.observacion}</p>
+                                </div>
                             </div>
                         </div>
+
                     </div>
 
                 </div>
-
-            </div>
-             }
+            }
 
 
 

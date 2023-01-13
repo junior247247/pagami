@@ -76,7 +76,7 @@ export const EntradaArticulo = () => {
 
     const addCajaDiaria = () => {
         const db = getFirestore(app);
-        const coll = collection(db, 'cajaDiaria');
+        const coll = collection(db, 'CajaDiaria');
         addDoc(coll, {
             total: Number(costoReparacion) + Number(costoRepuesto),
             idLocal: idLoca,
@@ -86,6 +86,8 @@ export const EntradaArticulo = () => {
 
 
     }
+
+    
 
     useEffect(() => {
         const db = getFirestore(app);
@@ -282,7 +284,7 @@ export const EntradaArticulo = () => {
                     <div className="row justify-content-between">
                         <div className="col-auto form-group">
 
-                            <input value={name} placeholder='Nombre' onChange={(e) => onChangeForm(e.target.value, 'name')} type="text" className='p-2 from-control ' />
+                            <input value={name.toUpperCase()}  placeholder='Nombre' onChange={(e) => onChangeForm(e.target.value, 'name')} type="text" className='p-2 from-control ' />
                         </div>
                         <div className="col-auto form-group">
 
@@ -304,7 +306,7 @@ export const EntradaArticulo = () => {
                     <div className="row justify-content-between  mb-4">
                         <div className="col-auto">
 
-                            <input value={equipo} placeholder='Equipo' onChange={(e) => onChangeForm(e.target.value, 'equipo')} type="text" className='p-2 from-control' />
+                            <input value={equipo.toUpperCase()} placeholder='Equipo' onChange={(e) => onChangeForm(e.target.value, 'equipo')} type="text" className='p-2 from-control' />
                         </div>
 
                         <div className="col-auto">

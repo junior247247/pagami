@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { context } from '../hooks/AppContext'
-import { addDoc, collection, orderBy, getFirestore, query, onSnapshot, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { addDoc, collection, orderBy, getFirestore, query, onSnapshot, updateDoc, doc, deleteDoc, where } from 'firebase/firestore';
 import { app } from '../Firebase/conexion';
 import { useForm } from '../hooks/useForm';
 import { Producto } from '../entidades/Producto';
 import { PDFViewer } from '@react-18-pdf/renderer';
 
 export const Productos = () => {
-    const { onChange } = useContext(context);
+    const { onChange,state } = useContext(context);
+    const {idLoca} =state;
     const [producto, setProducto] = useState<Producto[]>([]);
     const [getProdById, setGetProdById] = useState<Producto>();
     const { onChange: onChangeUpdate, code, desc, price, exits } = useForm({ code: '', desc: '', price: '', exits: '' });
 
-    const { onChange: onChangeForm, codigo, description, precio, existencia, PIva } = useForm({ codigo: '', description: '', precio: '', existencia: '', PIva: '' });
+    const { onChange: onChangeForm, codigo, description, precio, existencia, PIva,clear } = useForm({ codigo: '', description: '', precio: '', existencia: '', PIva: '' });
     useEffect(() => {
 
         onChange('Productos')
@@ -21,13 +22,7 @@ export const Productos = () => {
         }
     }, [])
 
-    const clear=()=>{
-        onChangeForm('','codigo');
-        onChangeForm('','description');
-       onChangeForm('','precio');
-        onChangeForm('','existencia');
-
-    }
+  
 
     const getById = (id: string) => {
         setGetProdById(producto.find(res => res.id == id));
@@ -42,7 +37,7 @@ export const Productos = () => {
     useEffect(() => {
         const db = getFirestore(app);
         const coll = collection(db, 'Producto');
-        const items = query(coll, orderBy('timestamp', 'desc'));
+        const items = query(coll, orderBy('timestamp', 'desc') ,where('idLocal','==',idLoca));
         onSnapshot(items, (snap) => {
             const Productos: Producto[] = snap.docs.map(data => {
                 return {
@@ -82,13 +77,14 @@ export const Productos = () => {
     const createProd = () => {
         const db = getFirestore(app);
         const coll = collection(db, 'Producto');
-      /*  addDoc(coll, {
+        addDoc(coll, {
             codigo,
             description,
             precio,
             existencia,
-            timestamp: new Date().getTime()
-        })*/
+            timestamp: new Date().getTime(),
+            idLocal:idLoca
+        })
         clear();
     }
 
@@ -111,19 +107,19 @@ export const Productos = () => {
                     <div className="col-4">
                         <p className='text-white'>Descripciopn</p>
                         <form action="" className='form-group'>
-                            <input value={description} onChange={(e) => onChangeForm(e.target.value, 'description')} className='form-control' type="text" />
+                            <input value={description.toUpperCase()} onChange={(e) => onChangeForm(e.target.value, 'description')} className='form-control' type="text" />
                         </form>
                     </div>
                     <div className="col-2">
                         <p className='text-white'>Precio</p>
                         <form action="" className='form-group'>
-                            <input value={precio} onChange={(e) => onChangeForm(e.target.value, 'precio')} className='form-control' type="text" />
+                            <input value={precio} onChange={(e) => onChangeForm(e.target.value, 'precio')} className='form-control' type="number" />
                         </form>
                     </div>
                     <div className="col-1">
                         <p className='text-white'>Existencia</p>
                         <form action="" className='form-group'>
-                            <input value={existencia} onChange={(e) => onChangeForm(e.target.value, 'existencia')} className='form-control' type="text" />
+                            <input value={existencia} onChange={(e) => onChangeForm(e.target.value, 'existencia')} className='form-control' type="number" />
                         </form>
                     </div>
 
@@ -167,8 +163,8 @@ export const Productos = () => {
                             producto.map((resp,index) => (
                                 <tr key={index}>
                                     <th scope="row">{resp.codigo}</th>
-                                    <td>{resp.description}</td>
-                                    <td>{resp.precio}</td>
+                                    <td>{resp.description.toUpperCase()}</td>
+                                    <td>{Number(resp.precio).toLocaleString('es')}</td>
                                     <td>{resp.existencia}</td>
                                     <td><a href="#" onClick={() => getById(resp.id)} className='btn btn-success' data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Editar</a></td>
                                     <td><a href="#" onClick={() => Eliminar(resp.id)}  className='btn btn-danger'>Eliminar</a></td>

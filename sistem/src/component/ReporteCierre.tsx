@@ -12,8 +12,14 @@ import ReactPDF, {
     Polyline
 } from '@react-pdf/renderer';
 
+interface Props{
+    gastos:number;
+    ventas:number;
+    dineroCaja:number;
+    fondo:number;
+}
 
-export const ReporteCierre = () => {
+export const ReporteCierre = ({gastos,ventas,dineroCaja,fondo}:Props) => {
   return (
    
 
@@ -54,10 +60,10 @@ export const ReporteCierre = () => {
 
             <View style={{ ...style.line }} />
             <View style={style.contianerTotal}>
-                <Text style={style.textDesct}>INGRESOS:</Text>
-                <Text style={style.textDesct}>RETIROS:0</Text>
-                <Text style={style.textDesct}>RETIROS MENOS INGRESOS:0</Text>
-                <Text style={style.textDesct}>TOTAL:</Text>
+                <Text style={style.textDesct}>INGRESOS:{ventas}</Text>
+                <Text style={style.textDesct}>RETIROS:{gastos}</Text>
+                <Text style={style.textDesct}>RETIROS MENOS INGRESOS:{ventas-ventas}</Text>
+                <Text style={style.textDesct}>TOTAL:{dineroCaja}</Text>
                 <Text style={style.textDesct}>HORA APERTIURA:</Text>
                 <Text style={style.textDesct}>Hora CIERRE:</Text>
             </View>
