@@ -6,13 +6,15 @@ import { app } from '../Firebase/conexion';
 export interface State{
     state:string,
     idLoca:string;
-    close:boolean
+    close:boolean,
+    stateLogin:'login'|'no-fondo'|'no-authenticate',
 }
 
 const initState:State={
     state:'Dashboard',
     idLoca:'',
-    close:false
+    close:false,
+    stateLogin:'no-authenticate'
 }
 
 interface Props{
@@ -37,7 +39,8 @@ const Reducer=(state:State,action:action):State=>{
         case 'login':
             return{
                 ...state,
-                idLoca:action.idLocal
+                idLoca:action.idLocal,
+             
             }
 
             case 'signOut':

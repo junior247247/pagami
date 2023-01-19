@@ -108,38 +108,7 @@ export const MainComponent = () => {
           </div>
         </div>
 
-        {/*
-          (close) &&
-
-          <div className="modal-container-delete" id='modal-container-delete' onClick={()=>funcClose(false)} >
-            <div className="modal-delete " onClick={(e) => e.stopPropagation()}>
-
-              <p className='ml-2 mt-3 text-center'>Salir del Sistema</p>
-
-
-              <hr />
-
-              <p className='text-center'>Realmente deceas Salir del Sistema</p>
-
-              <div className="container mt-5">
-                <div className="row">
-                  <div className="col">
-                    <button className="btn btn-color w-100" onClick={()=>{
-                      signOut();
-                      funcClose(false)
-                    }}>SI</button>
-                  </div>
-                  <div className="col">
-                    <button className="btn w-100 btn-color" onClick={()=>funcClose(false)}>NO</button>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-                  */}
+      
 
 
 

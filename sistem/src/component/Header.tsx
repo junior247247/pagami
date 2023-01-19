@@ -3,8 +3,9 @@ import React,{useContext} from 'react'
 import { context } from '../hooks/AppContext'
 
 export const Header = () => {
-    const {state}=useContext(context);
+    const {state,signOut}=useContext(context);
   
+   
     const showLateral=()=>{
       document.getElementById('lateral')!.style.width='300px';
       document.getElementById('transp')!.style.display='block';
@@ -22,7 +23,7 @@ export const Header = () => {
         <h1 className='text-white font-size-header'>{state.state}</h1>
 
         <div className="salir">
-        <img className='pointer' width={30} src={require('../img/cierre.png')}  />
+        <img onClick={signOut} className='pointer' width={30} src={require('../img/cierre.png')}  />
         <div className="items ">
           <span>Salir</span>
         </div>

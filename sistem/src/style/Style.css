@@ -516,6 +516,14 @@ body {
 
 }
 
+.modal-fondo{
+   padding: 10px;
+    border-radius: 10px;
+    background-color: white;
+    min-width: 300px;
+    animation: setReport 1s linear;
+}
+
 .modal-container-delete {
     display: flex;
     justify-content: center;

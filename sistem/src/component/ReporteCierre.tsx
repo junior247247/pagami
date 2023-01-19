@@ -64,8 +64,7 @@ export const ReporteCierre = ({gastos,ventas,dineroCaja,fondo}:Props) => {
                 <Text style={style.textDesct}>RETIROS:{gastos}</Text>
                 <Text style={style.textDesct}>RETIROS MENOS INGRESOS:{ventas-ventas}</Text>
                 <Text style={style.textDesct}>TOTAL:{dineroCaja}</Text>
-                <Text style={style.textDesct}>HORA APERTIURA:</Text>
-                <Text style={style.textDesct}>Hora CIERRE:</Text>
+             
             </View>
             <View style={{ ...style.line }} />
          

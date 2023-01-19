@@ -18,6 +18,7 @@ import React, { useEffect, useContext, useState } from "react";
 import { app } from "../Firebase/conexion";
 import { context } from "../hooks/AppContext";
 import { ReporteCierre } from "./ReporteCierre";
+import { Gastos } from "./Gastos";
 /*
   total: total,
             idLocal: idLoca,
@@ -41,6 +42,9 @@ export const Caja = () => {
   const [CajaDiaria, setCajaDiaria] = useState<CajaDiaria[]>([]);
   const [IsVisibleReport, setIsVisibleReport] = useState(false);
   const [DineroEnCaja, setDineroEnCaja] = useState<number>(0);
+  const [IsVisibleFondo, setIsVisibleFondo] = useState(false);
+  const [fondoCaja, setfondoCaja] = useState("");
+  const [fondoEnBase, setfondoEnBase] = useState("0");
 
   const [Retiros, setRetiros] = useState<Money[]>([]);
   const [monto, setmonto] = useState<Money[]>([]);
@@ -66,11 +70,6 @@ export const Caja = () => {
       setmonto(data);
     });
   }, []);
-
-
-
-
-
 
   useEffect(() => {
     const db = getFirestore(app);
@@ -125,8 +124,40 @@ export const Caja = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const db = getFirestore(app);
+    const coll = collection(db, "FondoCaja");
+    const document = doc(coll, idLoca);
+
+    getDoc(document).then((resp) => {
+      if (resp.exists()) {
+        setfondoEnBase(resp.get("fondo"));
+      }
+    });
+  }, []);
+
+  const IngresarFondo = async () => {
+    const db = getFirestore(app);
+    const coll = collection(db, "FondoCaja");
+    const dument = doc(coll, idLoca);
+    const getDocument = await getDoc(dument);
+    if (getDocument.exists()) {
+      updateDoc(dument, {
+        idLocal: idLoca,
+        fondo: fondoCaja,
+      });
+    } else {
+      setDoc(doc(db, "FondoCaja", idLoca), {
+        idLocal: idLoca,
+        fondo: fondoCaja,
+      });
+    }
+
+    setIsVisibleFondo(false);
+  };
+
   const cerrarTurno = async () => {
-    setIsVisibleReport(true);
+    setIsVisibleReport(false);
     const db = getFirestore(app);
     const coll = collection(db, "CierreCaja");
     const totalVenta = CajaDiaria.reduce(
@@ -142,19 +173,23 @@ export const Caja = () => {
     });
 
     const collectionCajaDiaria = collection(db, "CajaDiaria");
+
+
     const Q = query(
       collectionCajaDiaria,
       where("idLocal", "==", idLoca),
-      where("Cierre", "==", "SIN CIERRE")
+      where("cierre", "==", "SIN CIERRE")
     );
     const snapShop = await getDocs(Q);
     snapShop.docs.map((resp) => {
       const id = resp.id;
       const document = doc(collectionCajaDiaria, id);
       updateDoc(document, {
-        Cierre: "CIERRE DE CAJA",
+        cierre: "CIERRE DE CAJA",
       });
     });
+
+
 
     const collCaja = collection(db, "Caja");
     const QueryCaja = query(collCaja, where("idLocal", "==", idLoca));
@@ -165,6 +200,12 @@ export const Caja = () => {
       updateDoc(document, {
         money: "0",
       });
+    });
+
+    const collFondo = collection(db, "FondoCaja");
+    const document = doc(collFondo, idLoca);
+    updateDoc(document, {
+      fondo: "0",
     });
   };
 
@@ -186,13 +227,23 @@ export const Caja = () => {
           </h4>
         </div>
         <div className="col-4 border rounded">
-          <h4 className="text-color">Fondo en caja:0</h4>
-          <button
-            className="btn btn-outline-light w-100 mt-4"
-            onClick={() => setIsVisible(true)}
-          >
-            Cerrar Turno
-          </button>
+          <h4 className="text-color mt-2">
+            Fondo en caja:{Number(fondoEnBase).toLocaleString("es")}
+          </h4>
+          <div className="d-flex  justify-content-between mt-3">
+            <button
+              onClick={() => setIsVisibleFondo(true)}
+              className="btn btn-outline-light"
+            >
+              Fondo de Caja
+            </button>
+            <button
+              className="btn btn-outline-light "
+              onClick={() => setIsVisible(true)}
+            >
+              Cerrar Turno
+            </button>
+          </div>
         </div>
       </div>
 
@@ -243,7 +294,7 @@ export const Caja = () => {
             <div className="d-flex justify-content-between ">
               <button
                 className="btn btn-color w-75 m-auto"
-                onClick={() => setIsVisibleReport(true)}
+                onClick={() => {setIsVisibleReport(true);setIsVisible(false)}}
               >
                 Cerrar Turno
               </button>
@@ -277,7 +328,40 @@ export const Caja = () => {
                 &times;
               </a>
             </div>
-            <ReporteCierre ventas={0} gastos={0} fondo={0} dineroCaja={0} />
+            <ReporteCierre ventas={monto.reduce((total,monto)=>total+monto.monto,0)} gastos={Retiros.reduce((total, monto) => total + monto.monto, 0)} fondo={Number(fondoEnBase)} dineroCaja={DineroEnCaja} />
+          </div>
+        </div>
+      )}
+
+      {IsVisibleFondo && (
+        <div
+          className="modal-report-container"
+          onClick={() => setIsVisibleFondo(false)}
+        >
+          <div className="modal-fondo" onClick={(e) => e.stopPropagation()}>
+            <div className="d-flex justify-content-between  ">
+              <h3>Fondo de caja</h3>
+              <a className="btn" onClick={() => setIsVisibleFondo(false)}>
+                X
+              </a>
+            </div>
+            <hr />
+            <div className="container">
+              <div className="row">
+                <div className="col form-group">
+                  <input
+                    value={fondoCaja}
+                    onChange={(e) => setfondoCaja(e.target.value)}
+                    type="text"
+                    placeholder="Fondo de caja"
+                    className="form-control"
+                  />
+                </div>
+              </div>
+              <button onClick={IngresarFondo} className="btn btn-color">
+                Guardar
+              </button>
+            </div>
           </div>
         </div>
       )}

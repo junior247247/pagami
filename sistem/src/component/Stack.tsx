@@ -9,13 +9,9 @@ export const Stack = () => {
 
 
     const {state} = useContext(context);
-    console.log(state.idLoca);
+    //console.log(state.idLoca);
 
-    useEffect(() => {
-      const auth=getAuth(app);
-
-      console.log(auth.currentUser?.uid);
-    }, [])
+    
     
   return (
     

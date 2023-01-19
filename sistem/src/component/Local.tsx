@@ -20,7 +20,7 @@ export const Local = () => {
   const  {name,email,pass,passConfirm,clear,onChange:onChangeForm}= useForm({name:'',email:'',pass:'',passConfirm:''});
 
   useEffect(() => {
-    onChange('Local');
+   onChange('Local');
 
   }, [])
 
