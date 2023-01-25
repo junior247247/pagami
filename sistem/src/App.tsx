@@ -17,6 +17,8 @@ import { Local } from './component/Local';
 import { Caja } from './component/Caja';
 import { Gastos } from './component/Gastos';
 import { Stack } from './component/Stack';
+import { MainComponent } from './component/MainComponent';
+import { Login } from './component/Login';
 
 
 interface Butons {
@@ -43,7 +45,7 @@ const App = () => {
 
   const [ButtonSelect, setButtonSelect] = useState<Butons>({ Productos: false, ingreso: false, salida: false, enReparacion: false, Historial: false, Tecnicos: false, Horario: false, Local: false });
 
-
+    const{state} = useContext(context);
 
   const closeMenu = () => {
     document.getElementById('lateral')!.style.width = '0';
@@ -57,7 +59,7 @@ const App = () => {
     <AppState>
      
     
-    <Stack/>
+    <MainComponent/>
 
     
     </AppState>

@@ -13,10 +13,11 @@ import { Local } from './Local';
 import { Caja } from './Caja';
 import { Gastos } from './Gastos';
 import { context } from '../hooks/AppContext';
+import { Login } from './Login';
 
 export const MainComponent = () => {
 
- // const { state,close:funcClose ,signOut} = useContext(context);
+ 
   
   const closeMenu = () => {
     document.getElementById('lateral')!.style.width = '0';
@@ -89,19 +90,25 @@ export const MainComponent = () => {
               <Header />
             </div>
             <Routes>
-              <Route index element={<Productos />} />
-              <Route path='/entrada' element={<EntradaArticulo />} />
-              <Route path='/Productos' element={<Productos />} />
-              <Route path='/salida' element={<Salida />} />
-              <Route path='/Venta' element={<Ventas />} />
-              <Route path='/EnReparacion' element={<En_Reparacion />} />
-              <Route path='/Historial' element={<Historial />} />
-              <Route path='/Tecnicos' element={<Tecnicos />} />
-              <Route path='/Horario' element={<Horario />} />
-              <Route path='/Local' element={<Local />} />
-              <Route path='/Caja' element={<Caja />} />
-              <Route path='/Gastos' element={<Gastos />} />
-              <Route path='*' element={<Productos />} />
+                
+                
+                
+                  <Route index element={<Productos />} />
+                  <Route path='/entrada' element={<EntradaArticulo />} />
+                  <Route path='/Productos' element={<Productos />} />
+                  <Route path='/salida' element={<Salida />} />
+                  <Route path='/Venta' element={<Ventas />} />
+                  <Route path='/EnReparacion' element={<En_Reparacion />} />
+                  <Route path='/Historial' element={<Historial />} />
+                  <Route path='/Tecnicos' element={<Tecnicos />} />
+                  <Route path='/Horario' element={<Horario />} />
+                  <Route path='/Local' element={<Local />} />
+                  <Route path='/Caja' element={<Caja />} />
+                  <Route path='/Gastos' element={<Gastos />} />
+                  <Route path='*' element={<Productos />} />
+                 
+                
+           
 
             </Routes>
 

@@ -1,6 +1,7 @@
 import { type } from '@testing-library/user-event/dist/type';
-import React, { createContext,useReducer ,useEffect} from 'react'
-import {signInWithEmailAndPassword,getAuth, signOut,onAuthStateChanged } from 'firebase/auth'
+import React, { createContext,useReducer ,useEffect,useState} from 'react'
+import {signInWithEmailAndPassword,getAuth, signOut,onAuthStateChanged, User } from 'firebase/auth'
+   
 import { app } from '../Firebase/conexion';
 
 export interface State{
@@ -12,7 +13,7 @@ export interface State{
 
 const initState:State={
     state:'Dashboard',
-    idLoca:'',
+    idLoca:'V85kPfvW7vQSd9Ybq5CjiT88yg03',
     close:false,
     stateLogin:'no-authenticate'
 }
@@ -23,6 +24,7 @@ interface Props{
     login:(idLocal:string)=>void;
     signOut:()=>void;
     close:(close:boolean)=>void;
+    CurrentUser:User;
 }
 export const context=createContext({}as Props);
 
@@ -40,6 +42,7 @@ const Reducer=(state:State,action:action):State=>{
             return{
                 ...state,
                 idLoca:action.idLocal,
+                stateLogin:'login'
              
             }
 
@@ -58,22 +61,19 @@ const Reducer=(state:State,action:action):State=>{
             return state;
     }
 }
+const auth=getAuth(app);
 
 
 export const AppContext = ({children}:any) => {
 
     const [state, dispatch] = useReducer(Reducer,initState);
+    const [CurrentUser, setCurrentUser] = useState<User>();
 
     useEffect(() => {
 
-        const auth=getAuth(app);
+   
 
-        onAuthStateChanged(auth,(user)=>{
-            if(user?.uid!=null){
-                dispatch({type:'login',idLocal:auth.currentUser!.uid});
-            }
-            
-        })
+      
 
      
 
@@ -104,7 +104,8 @@ export const AppContext = ({children}:any) => {
     onChange,
     login,
     signOut,
-    close
+    close,
+    CurrentUser:CurrentUser!
    }}
    >
         {children}
