@@ -61,7 +61,7 @@ const Reducer=(state:State,action:action):State=>{
             return state;
     }
 }
-const auth=getAuth(app);
+//const auth=getAuth(app);
 
 
 export const AppContext = ({children}:any) => {
@@ -69,16 +69,7 @@ export const AppContext = ({children}:any) => {
     const [state, dispatch] = useReducer(Reducer,initState);
     const [CurrentUser, setCurrentUser] = useState<User>();
 
-    useEffect(() => {
-
    
-
-      
-
-     
-
-
-    }, [])
     
     const close=(close:boolean)=>{
         dispatch({type:'close',close});
